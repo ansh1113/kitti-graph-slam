@@ -6,7 +6,7 @@ LiDAR SLAM (Simultaneous Localization and Mapping) on the [KITTI Raw dataset](ht
 
 ## Tasks
 
-### Task 0 — Ground Truth Map Accumulation
+### Task 0: Ground Truth Map Accumulation
 
 Accumulates 100 LiDAR scans into a single world-frame point cloud using ground truth poses, then rasterizes it to a top-down occupancy map at 0.05 m/pixel resolution.
 
@@ -14,7 +14,7 @@ Accumulates 100 LiDAR scans into a single world-frame point cloud using ground t
 |---|---|
 | ![map gt](outputs/maps/map_gt.png) | ![gt density](outputs/maps/gt_density.png) |
 
-### Task 1 — ICP Odometry (Pose Chaining)
+### Task 1: ICP Odometry (Pose Chaining)
 
 Builds a trajectory by running pairwise ICP between consecutive LiDAR frames (Open3D point-to-point, voxel size 0.25 m, max correspondence 1.5 m, 60 iterations). Relative transforms are chained in SE(2) to form a global trajectory.
 
@@ -29,7 +29,7 @@ Accumulated odometry drift causes ~0.68 m ATE RMSE over 100 frames.
 |---|---|
 | ![map icp](outputs/maps/map_icp.png) | ![icp density](outputs/maps/icp_density.png) |
 
-### Task 2 — Graph-SLAM with Gauss-Newton
+### Task 2: Graph-SLAM with Gauss-Newton
 
 Jointly optimizes all poses and landmark positions by minimizing a factor graph energy:
 
@@ -39,7 +39,7 @@ E_total = Σ_t ||r_motion(x_t, x_{t+1}, u_t)||²_R  +  Σ_{t,j} ||r_obs(x_t, m_j
 
 where `R = diag(0.24, 0.24, 0.04)` (motion noise) and `Q = diag(0.08, 0.08)` (distance observation noise).
 
-#### Task 2.1 — Motion Residual and Analytical Jacobians
+#### Task 2.1: Motion Residual and Analytical Jacobians
 
 SE(2) forward kinematics and residual:
 ```
@@ -61,7 +61,7 @@ J_j = I₃
 
 ![Jacobian sparsity](outputs/jacobian/jacobian_spy.png)
 
-#### Task 2.2 — Gauss-Newton Solver
+#### Task 2.2: Gauss-Newton Solver
 
 Iterative nonlinear least-squares:
 1. Build sparse Jacobian `J` and residual `r` from all factors
@@ -78,7 +78,7 @@ Converges in **6 iterations**, cutting ATE RMSE from 0.68 m to **0.33 m**.
 |---|---|
 | ![map slam](outputs/maps/map_slam.png) | ![traj overlay](outputs/traj/traj_overlay.png) |
 
-### Extra Credit — Mesh Reconstruction and LiDAR Simulation
+### Extra Credit: Mesh Reconstruction and LiDAR Simulation
 
 Reconstructs a 3D mesh from the accumulated point cloud using Open3D Poisson surface reconstruction, then ray-casts simulated LiDAR scans on the mesh.
 
@@ -120,7 +120,7 @@ pip install -r requirements.txt
 
 ## Data
 
-Download the same KITTI raw data as MP0 (requires UIUC login) and place it under `data/`:
+Download the same KITTI raw data and place it under `data/`:
 
 ```
 data/
